@@ -3389,7 +3389,7 @@ function wp_insert_post( $postarr, $wp_error = false ) {
 			$import_id = (int) $import_id;
 			if ( ! $wpdb->get_var( $wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE ID = %d", $import_id) ) ) {
 				$enable_identity_insert = "SET IDENTITY_INSERT $wpdb->posts ON";
-				sqlsrv_query( $wpdb->dbh, $enable_identity_insert );
+				odbc_exec( $wpdb->dbh, $enable_identity_insert );
 				$data['ID'] = $import_id;
 			}
 		}
@@ -3401,7 +3401,7 @@ function wp_insert_post( $postarr, $wp_error = false ) {
 			}
 			if( !empty($data[ 'ID' ])) {
 				$enable_identity_insert = "SET IDENTITY_INSERT $wpdb->posts OFF";
-				sqlsrv_query( $wpdb->dbh, $enable_identity_insert );
+				odbc_exec( $wpdb->dbh, $enable_identity_insert );
 			}
 		}
 		$post_ID = (int) $wpdb->insert_id;

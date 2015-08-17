@@ -1258,8 +1258,8 @@ class wpdb {
 	public function print_error( $str = '' ) {
 		global $EZSQL_ERROR;
 
-		if ( ! $str ) {
-			$errors = sqlsrv_errors();
+		//if ( ! $str ) {
+		//	$errors = sqlsrv_errors();
 
 			if( ! empty( $errors ) && is_array( $errors ) )
 				$str = $errors[ 0 ][ 'message' ] . ' Code - ' . $errors[ 0 ][ 'code' ];
@@ -1368,7 +1368,7 @@ class wpdb {
 		$this->last_error  = '';
 
 		if ( is_resource( $this->result ) ) {
-			sqlsrv_free_stmt( $this->result );
+			odbc_free_result( $this->result );
 		}
 	}
 
@@ -1399,9 +1399,9 @@ class wpdb {
 
 		ini_set( 'display_errors', 1 );
 		if ( WP_DEBUG ) {
-			$this->dbh = sqlsrv_connect( $this->dbhost, array( "Database"=> $this->dbname, "UID"=> $this->dbuser, "PWD"=> $this->dbpassword, 'ReturnDatesAsStrings'=>true, 'MultipleActiveResultSets'=> false) );
+			$this->dbh = odbc_connect( "Driver=FreeTDS;DSN=projectnami", $this->dbuser, $this->dbpassword );
 		} else {
-			$this->dbh = sqlsrv_connect( $this->dbhost, array( "Database"=> $this->dbname, "UID"=> $this->dbuser, "PWD"=> $this->dbpassword, 'ReturnDatesAsStrings'=>true, 'MultipleActiveResultSets'=> false) );
+			$this->dbh = odbc_connect( "Driver=FreeTDS;DSN=projectnami", $this->dbuser, $this->dbpassword );
 			}
 
 		if ( ! $this->dbh && $allow_bail ) {
@@ -1594,7 +1594,7 @@ class wpdb {
         */
 
         // If there is an error, first attempt to translate
-        $errors = sqlsrv_errors();
+        //$errors = sqlsrv_errors();
 		if( ! empty( $errors ) && is_array( $errors ) ) {
             switch ( $errors[ 0 ][ 'code' ] ){
                 case 102:
@@ -1624,7 +1624,7 @@ class wpdb {
 	    	        $this->_do_query( $query );
 
 		            // If there is an error then take note of it..
-		            $errors = sqlsrv_errors();
+		            //$errors = sqlsrv_errors();
             }
 		}
 		
@@ -1642,12 +1642,12 @@ class wpdb {
 		if ( preg_match( '/^\s*(create|alter|truncate|drop)\s/i', $query ) ) {
 			$return_val = $this->result;
 		} elseif ( preg_match( '/^\s*(insert|delete|update|replace)\s/i', $query ) && $this->query_statement_resource != false ) {
-			$this->rows_affected = sqlsrv_rows_affected( $this->query_statement_resource );
+			$this->rows_affected = odbc_num_rows( $this->query_statement_resource );
 			// Take note of the insert_id
 			if ( preg_match( '/^\s*(insert|replace)\s/i', $query ) ) {
-				$this->insert_id = sqlsrv_query($this->dbh, 'SELECT isnull(scope_identity(), 0)');
+				$this->insert_id = odbc_exec($this->dbh, 'SELECT isnull(scope_identity(), 0)');
 
-				$row = sqlsrv_fetch_array( $this->insert_id );
+				$row = array_values( odbc_fetch_array( $this->insert_id ) );
 					
 				$this->insert_id = $row[0];
 			}
@@ -1655,7 +1655,7 @@ class wpdb {
 			$return_val = $this->rows_affected;
 		} else {
 			$num_rows = 0;
-			while ( $row = @sqlsrv_fetch_object( $this->query_statement_resource ) ) {
+			while ( $row = @odbc_fetch_object( $this->query_statement_resource ) ) {
 				$this->last_result[$num_rows] = $row;
 				$num_rows++;
 			}
@@ -1687,7 +1687,7 @@ class wpdb {
 			$this->timer_start();
 		}
 
-		$this->result = sqlsrv_query( $this->dbh, $query );
+		$this->result = odbc_exec( $this->dbh, $query );
  
 		$this->query_statement_resource = $this->result;
 		
@@ -2038,10 +2038,10 @@ class wpdb {
 
 		if ( $query && $x == 0 && $y == 0 ) {
 		
-			$result = sqlsrv_query($this->dbh, $query );
+			$result = odbc_exec($this->dbh, $query );
 			
             // If there is an error, first attempt to translate
-            $errors = sqlsrv_errors();
+            #$errors = sqlsrv_errors();
 		    if( ! empty( $errors ) && is_array( $errors ) ) {
                 switch ( $errors[ 0 ][ 'code' ] ){
                     case 102:
@@ -2067,14 +2067,14 @@ class wpdb {
 			                error_log( $endtransmsg, 3, 'D:\home\LogFiles\translate.log' );
                         }
 
-            			$result = sqlsrv_query($this->dbh, $query );
+            			$result = odbc_exec($this->dbh, $query );
                 }
 		    }
 
 			if(false === $result)
 				return null;
 			
-			$row = sqlsrv_fetch_array( $result );
+			$row = array_values( odbc_fetch_array( $result ) );
 			return $row[ 0 ];
 		}
 

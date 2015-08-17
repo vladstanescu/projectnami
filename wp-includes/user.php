@@ -1355,8 +1355,8 @@ function count_users($strategy = 'time') {
 		// Add the meta_value index to the selection list, then run the query.
 		$row = $wpdb->get_row( "SELECT $select_count, COUNT(*) FROM $wpdb->usermeta WHERE meta_key = '{$blog_prefix}capabilities'", ARRAY_N );
 		$query = "SELECT $select_count, COUNT(*) AS [all] FROM $wpdb->usermeta WHERE meta_key = '{$blog_prefix}capabilities'";
-		$result = sqlsrv_query( $wpdb->dbh, $query );
-		$result = sqlsrv_fetch_array($result);
+		$result = odbc_exec( $wpdb->dbh, $query );
+		$result = array_values( odbc_fetch_array($result) );
 
 		$row = $result;
 

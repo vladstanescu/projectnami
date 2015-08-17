@@ -4355,11 +4355,11 @@ function _wp_mysql_week( $column ) {
 	case 4 :
 	case 5 :
 	case 6 :
-		sqlsrv_query( $wpdb->dbh, "SET DATEFIRST $start_of_week" );
+		odbc_exec( $wpdb->dbh, "SET DATEFIRST $start_of_week" );
 		return "DATEPART( wk, $column )";
 	case 0 :
 	default :
-		sqlsrv_query( $wpdb->dbh, "SET DATEFIRST 7" );
+		odbc_exec( $wpdb->dbh, "SET DATEFIRST 7" );
 		return "DATEPART( wk, $column )";
 	}
 }

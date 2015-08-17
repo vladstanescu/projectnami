@@ -569,8 +569,8 @@ function upgrade_400() {
 function upgrade_410() {
 	global $wp_current_db_version, $wpdb;
 	if ( $wp_current_db_version < 30133 ) {
-		sqlsrv_query( $wpdb->dbh, "if exists (select * from sysindexes where name = '$wpdb->terms" . "_UK1') DROP INDEX $wpdb->terms" . "_UK1 ON $wpdb->terms" );
-		sqlsrv_query( $wpdb->dbh, "if not exists (select * from sysindexes where name = '$wpdb->terms" . "_IDX1') CREATE INDEX $wpdb->terms" . "_IDX1 ON $wpdb->terms (slug)" );
+		odbc_exec( $wpdb->dbh, "if exists (select * from sysindexes where name = '$wpdb->terms" . "_UK1') DROP INDEX $wpdb->terms" . "_UK1 ON $wpdb->terms" );
+		odbc_exec( $wpdb->dbh, "if not exists (select * from sysindexes where name = '$wpdb->terms" . "_IDX1') CREATE INDEX $wpdb->terms" . "_IDX1 ON $wpdb->terms (slug)" );
 	}
 }
 
@@ -582,7 +582,7 @@ function upgrade_410() {
 function upgrade_410a() {
 	global $wp_current_db_version, $wpdb;
 	if ( $wp_current_db_version < 30134 ) {
-		sqlsrv_query( $wpdb->dbh, "if not exists (select * from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME = '$wpdb->signups' and column_name = 'meta') alter table $wpdb->signups add meta nvarchar(max) NULL" );
+		odbc_exec( $wpdb->dbh, "if not exists (select * from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME = '$wpdb->signups' and column_name = 'meta') alter table $wpdb->signups add meta nvarchar(max) NULL" );
 	}
 }
 
