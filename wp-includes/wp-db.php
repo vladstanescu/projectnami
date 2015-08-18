@@ -1258,7 +1258,7 @@ class wpdb {
 	public function print_error( $str = '' ) {
 		global $EZSQL_ERROR;
 
-		//if ( ! $str ) {
+		if ( ! $str ) {
 		//	$errors = sqlsrv_errors();
 
 			if( ! empty( $errors ) && is_array( $errors ) )
