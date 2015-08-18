@@ -117,7 +117,7 @@ function wp_check_php_mysql_versions() {
 		die( sprintf( __( 'Your server is running PHP version %1$s but Project Nami %2$s requires at least %3$s.' ), $php_version, $wp_version, $required_php_version ) );
 	}
 
-	if ( ( ! extension_loaded( 'sqlsrv' ) || ! extension_loaded( 'odbc' ) ) && ! file_exists( WP_CONTENT_DIR . '/db.php' ) ) {
+	if ( ( ! extension_loaded( 'sqlsrv' ) && ! extension_loaded( 'odbc' ) ) && ! file_exists( WP_CONTENT_DIR . '/db.php' ) ) {
 		wp_load_translations_early();
 		 header( 'Content-Type: text/html; charset=utf-8' );
 		die( __( 'Your PHP installation appears to be missing the SQLSrv extension which is required by Project Nami.' ) );
