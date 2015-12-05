@@ -135,8 +135,10 @@ class WP_MS_Sites_List_Table extends WP_List_Table {
 		} elseif ( $order_by == 'blog_id' ) {
 			$query .= ' ORDER BY blog_id ';
 		} else {
+			// PN Mod: Start
 			$order_by = 'blog_id';
 			$query .= ' ORDER BY blog_id ';
+			// PN Mod: End
 		}
 
 		if ( isset( $order_by ) ) {
